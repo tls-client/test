@@ -1,86 +1,239 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Raider</title>
-  <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="lightblue" />
+<title>DPKO Raider 改造完全版</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+<style>
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #11131a; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb { background: #5865f2; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #64d6ff; }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: radial-gradient(ellipse at 60% 30%, #23253b 0%, #1a1b20 35%, #101018 100%);
+    color: #fff;
+    margin: 0; padding: 0;
+    display: flex; justify-content: center; align-items: center;
+    height: 100vh;
+    overflow: hidden;
+  }
+  .card {
+    background: #20222b;
+    padding: 32px;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,.6);
+    width: 100%; max-width: 600px;
+    overflow-y: auto; max-height: 95vh;
+  }
+  h2 {
+    color: #64d6ff;
+    text-align: center;
+    margin-bottom: 24px;
+    font-weight: 600;
+  }
+  label {
+    display: block;
+    margin-top: 18px;
+    font-size: 14px;
+  }
+  textarea, input[type="text"], input[type="number"], select {
+    width: 100%; padding: 10px; margin-top: 6px;
+    border-radius: 8px; border: none;
+    background: #15161b; color: #fff;
+    font-family: monospace; resize: vertical;
+  }
+  textarea { overflow-y: auto; }
+  input[type="number"] { width: 80px; }
+  button.primary {
+    margin-top: 24px;
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg,#5a5d69,#36404b);
+    color: #fff;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: .5px;
+    cursor: pointer;
+    transition: all .3s;
+  }
+  button.primary:hover {
+    background: linear-gradient(135deg,#64d6ff,#23253b);
+    color: #15161b;
+    transform: scale(1.03);
+  }
+  button.primary:active {
+    transform: scale(0.96);
+  }
+  #log {
+    margin-top: 20px;
+    padding: 10px;
+    height: 150px;
+    overflow-y: auto;
+    background: #15161b;
+    border-radius: 10px;
+    font-family: monospace;
+    font-size: 12px;
+    white-space: pre-wrap;
+  }
+</style>
 </head>
 <body>
-  <div class="card">
-    <h2>Raider</h2>
+<div class="card">
+  <h2>DPKO Raider 改造完全版</h2>
+  <label>トークン
+    <textarea id="tokens" rows="4" placeholder="Discordトークンを入力してください"></textarea>
+  </label>
+  <label>サーバーID
+    <input type="text" id="guildId" placeholder="123456789012345678" />
+  </label>
+  <label>チャンネルID
+    <textarea id="channelIds" rows="2" placeholder="カンマ区切りで入力"></textarea>
+  </label>
+  <label>メッセージ内容
+    <textarea id="message" rows="4" placeholder="メッセージを入力"></textarea>
+  </label>
+  <label>メッセージ送信間隔（秒）
+    <input type="number" id="delay" min="0" step="0.1" value="1" />
+  </label>
+  <label>メッセージ送信上限
+    <input type="number" id="limit" min="1" step="1" value="1" />
+  </label>
+  <button id="sendMessages" class="primary">メッセージ送信</button>
+  <hr />
+  <h3>プロフィール変更</h3>
+  <label>グローバルネーム（表示名）
+    <input type="text" id="globalName" placeholder="変更したい名前" />
+  </label>
+  <label>プロフィール画像 (base64)
+    <textarea id="avatarBase64" rows="4" placeholder="data:image/png;base64,..."></textarea>
+  </label>
+  <button id="changeProfile" class="primary">プロフィール変更</button>
+  <div id="log"></div>
+</div>
 
-    <form id="form">
-      <label>トークン（カンマ/改行/スペース区切り）
-        <textarea id="tokens" rows="4" placeholder="MT..., MT..."></textarea>
-      </label>
+<script>
+const logEl = document.getElementById('log');
+function appendLog(msg) {
+  logEl.textContent += msg + '\
+';
+  logEl.scrollTop = logEl.scrollHeight;
+}
 
-      <label>サーバーID
-        <input type="text" id="guildId" placeholder="123456789012345678">
-      </label>
+function parseTokens(input) {
+  return input.split(/[s,]+/).filter(Boolean);
+}
 
-      <label>チャンネルID（空欄で全テキストチャンネル）
-        <textarea id="channelIds" rows="2"></textarea>
-      </label>
-      <button type="button" id="autoFillChannels" class="secondary">自動取得</button>
+function parseChannelIds(input) {
+  return input.split(/[s,]+/).filter(Boolean);
+}
 
-      <label>メッセージ内容
-        <textarea id="message" rows="4">@everyone</textarea>
-      </label>
+async function sendMessage(token, channelId, content) {
+  const url = `https://discord.com/api/v9/channels/${channelId}/messages`;
+  const payload = { content };
+  const headers = {
+    'Authorization': token,
+    'Content-Type': 'application/json'
+  };
+  const res = await fetch(url, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify(payload),
+    referrerPolicy: 'no-referrer'
+  });
+  return res;
+}
 
-      <div class="options">
-        <label><input type="checkbox" id="randomize"> ランダマイズ</label>
-        <label><input type="checkbox" id="randomString"> ランダム文字列追加</label>
-        <label><input type="checkbox" id="everyone"> @everyone付与</label>
-      </div>
+async function changeProfile(token, globalName, avatarBase64) {
+  const url = "https://discord.com/api/v9/users/@me";
+  const payload = {};
+  if(globalName) payload.global_name = globalName;
+  if(avatarBase64) payload.avatar = avatarBase64;
+  const headers = {
+    'Authorization': token,
+    'Content-Type': 'application/json'
+  };
+  const res = await fetch(url, {
+    method: 'PATCH',
+    headers,
+    body: JSON.stringify(payload),
+    referrerPolicy: 'no-referrer'
+  });
+  return res;
+}
 
-      <div class="row">
-        <label>間隔(秒)<input type="number" id="delay" value="0.8" step="0.1" min="0"></label>
-        <label>上限(回)<input type="number" id="limit" placeholder="無制限"></label>
-      </div>
+document.getElementById('sendMessages').addEventListener('click', async () => {
+  appendLog('メッセージ送信開始');
+  const tokens = parseTokens(document.getElementById('tokens').value);
+  const guildId = document.getElementById('guildId').value.trim();
+  const channelIds = parseChannelIds(document.getElementById('channelIds').value);
+  const message = document.getElementById('message').value;
+  const delay = Number(document.getElementById('delay').value) * 1000;
+  const limit = Number(document.getElementById('limit').value);
 
-      <details><summary>高度な設定</summary>
-        <div class="detail">
-          <label>メンションID<textarea id="mentionIds"></textarea></label>
-          <button type="button" id="fetchMentions" class="secondary">自動取得</button>
-          <label>投票タイトル<input type="text" id="pollTitle"></label>
-          <label>投票選択肢<textarea id="pollAnswers"></textarea></label>
-          <label>転送URL<input type="text" id="forwardUrl" placeholder="https://discord.com/channels/..."></label>
-        </div>
-      </details>
+  if (!tokens.length || !guildId || !channelIds.length || !message) {
+    appendLog('トークン・サーバーID・チャンネルID・メッセージは必須です');
+    return;
+  }
 
-      <button type="submit" id="startBtn" class="primary">実行</button>
-    </form>
+  for (const token of tokens) {
+    let sentCount = 0;
+    for (const channelId of channelIds) {
+      if(limit > 0 && sentCount >= limit) break;
+      try {
+        const res = await sendMessage(token, channelId, message);
+        if(res.ok){
+          appendLog(`✅ ${token.slice(0,10)}***** - ${channelId} にメッセージ送信成功`);
+          sentCount++;
+        } else {
+          const error = await res.json();
+          appendLog(`❌ ${token.slice(0,10)}***** - ${channelId} に失敗: ${error.message || res.status}`);
+        }
+      } catch(err){
+        appendLog(`❌ ${token.slice(0,10)}***** - ${channelId} に送信中エラー: ${err.message}`);
+      }
+      await new Promise(r => setTimeout(r, delay));
+    }
+  }
+  appendLog('メッセージ送信処理完了');
+});
 
-    <div class="controls">
-      <button id="stopBtn">停止</button>
-      <button id="leaveBtn">サーバー退出</button>
-    </div>
+document.getElementById('changeProfile').addEventListener('click', async () => {
+  appendLog('プロフィール変更開始');
+  const tokens = parseTokens(document.getElementById('tokens').value);
+  const globalName = document.getElementById('globalName').value.trim();
+  const avatarBase64 = document.getElementById('avatarBase64').value.trim();
 
-    <details><summary>ニックネーム変更</summary>
-      <div class="detail"><input type="text" id="nickname" placeholder="新しいニックネーム">
-        <button id="nickBtn" class="secondary">変更</button>
-      </div>
-    </details>
+  if (!tokens.length) {
+    appendLog('トークンを入力してください');
+    return;
+  }
+  if(!globalName && !avatarBase64){
+    appendLog('グローバルネームかプロフィール画像を入力してください');
+    return;
+  }
 
-    <details><summary>ステータス変更</summary>
-      <div class="detail">
-        <select id="status">
-          <option value="online">オンライン</option>
-          <option value="idle">離席中</option>
-          <option value="dnd">取り込み中</option>
-          <option value="invisible">オフライン</option>
-        </select>
-        <input type="text" id="activity" placeholder="Playing Minecraft">
-        <button id="statusBtn" class="secondary">変更</button>
-        <button id="clearStatusBtn" class="secondary">リセット</button>
-      </div>
-    </details>
-
-    <div id="log">準備完了</div>
-  </div>
-
-  <script src="script.js"></script>
+  for(const token of tokens){
+    try{
+      const res = await changeProfile(token, globalName, avatarBase64);
+      if(res.ok){
+        appendLog(`✅ ${token.slice(0,10)}***** - プロフィール変更成功`);
+      } else {
+        const err = await res.json();
+        appendLog(`❌ ${token.slice(0,10)}***** - プロフィール変更失敗: ${err.message || res.status}`);
+      }
+    } catch(e){
+      appendLog(`❌ ${token.slice(0,10)}***** - プロフィール変更中エラー: ${e.message}`);
+    }
+  }
+  appendLog('プロフィール変更処理完了');
+});
+</script>
 </body>
 </html>
