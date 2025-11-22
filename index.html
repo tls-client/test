@@ -3,90 +3,82 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DPKO Raider</title>
+  <title>Raider</title>
   <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="container">
-    <h1>DPKO Raider</h1>
+  <div class="card">
+    <h2>Raider</h2>
 
-    <!-- トークン -->
-    <div class="section">
-      <div class="header" onclick="toggle(this)">▼ トークン</div>
-      <div class="content">
-        <textarea id="tokens" placeholder="カンマ / 改行 / スペースで区切る"></textarea>
+    <form id="form">
+      <label>トークン（カンマ/改行/スペース区切り）
+        <textarea id="tokens" rows="4" placeholder="MT..., MT..."></textarea>
+      </label>
+
+      <label>サーバーID
+        <input type="text" id="guildId" placeholder="123456789012345678">
+      </label>
+
+      <label>チャンネルID（空欄で全テキストチャンネル）
+        <textarea id="channelIds" rows="2"></textarea>
+      </label>
+      <button type="button" id="autoFillChannels" class="secondary">自動取得</button>
+
+      <label>メッセージ内容
+        <textarea id="message" rows="4">@everyone</textarea>
+      </label>
+
+      <div class="options">
+        <label><input type="checkbox" id="randomize"> ランダマイズ</label>
+        <label><input type="checkbox" id="randomString"> ランダム文字列追加</label>
+        <label><input type="checkbox" id="everyone"> @everyone付与</label>
       </div>
-    </div>
 
-    <!-- サーバーID -->
-    <div class="section">
-      <div class="header" onclick="toggle(this)">▼ サーバーID</div>
-      <div class="content">
-        <input type="text" id="guild" placeholder="123456789012345678">
+      <div class="row">
+        <label>間隔(秒)<input type="number" id="delay" value="0.8" step="0.1" min="0"></label>
+        <label>上限(回)<input type="number" id="limit" placeholder="無制限"></label>
       </div>
-    </div>
 
-    <!-- チャンネルID -->
-    <div class="section">
-      <div class="header" onclick="toggle(this)">▼ チャンネルID</div>
-      <div class="content">
-        <textarea id="channels" placeholder="カンマ / 改行 / スペースで区切る"></textarea>
-      </div>
-    </div>
-
-    <!-- メッセージ内容 -->
-    <div class="section">
-      <div class="header" onclick="toggle(this)">▼ メッセージ内容</div>
-      <div class="content">
-        <textarea id="message" placeholder="送信するメッセージを入力">@everyone</textarea>
-        <div class="options">
-          <label><input type="checkbox" id="random"> メッセージのランダム化</label>
-          <label><input type="checkbox" id="mention"> メンション追加</label>
+      <details><summary>高度な設定</summary>
+        <div class="detail">
+          <label>メンションID<textarea id="mentionIds"></textarea></label>
+          <button type="button" id="fetchMentions" class="secondary">自動取得</button>
+          <label>投票タイトル<input type="text" id="pollTitle"></label>
+          <label>投票選択肢<textarea id="pollAnswers"></textarea></label>
+          <label>転送URL<input type="text" id="forwardUrl" placeholder="https://discord.com/channels/..."></label>
         </div>
+      </details>
+
+      <button type="submit" id="startBtn" class="primary">実行</button>
+    </form>
+
+    <div class="controls">
+      <button id="stopBtn">停止</button>
+      <button id="leaveBtn">サーバー退出</button>
+    </div>
+
+    <details><summary>ニックネーム変更</summary>
+      <div class="detail"><input type="text" id="nickname" placeholder="新しいニックネーム">
+        <button id="nickBtn" class="secondary">変更</button>
       </div>
-    </div>
+    </details>
 
-    <!-- メッセージ配信設定 -->
-    <div class="section">
-      <div class="header" onclick="toggle(this)">▼ メッセージ配信設定</div>
-      <div class="content">
-        <input type="text" id="webhook" placeholder="配信するメッセージWebhook URL">
-      </div>
-    </div>
-
-    <!-- 実行ボタン -->
-    <div class="actions">
-      <button id="start">実行</button>
-      <button id="stop">システム停止</button>
-      <button id="leave">サーバー退出</button>
-    </div>
-
-    <!-- ニックネーム変更 -->
-    <div class="section">
-      <div class="header" onclick="toggle(this)">▼ ニックネーム変更</div>
-      <div class="content">
-        <input type="text" id="nickname" placeholder="新しいニックネームを入力">
-      </div>
-    </div>
-
-    <!-- ステータス変更 -->
-    <div class="section">
-      <div class="header" onclick="toggle(this)">▼ ステータス変更</div>
-      <div class="content">
-        <select id="status-type">
-          <option>オンライン</option>
-          <option>オフライン</option>
-          <option>取り込み中</option>
-          <option>退席中</option>
+    <details><summary>ステータス変更</summary>
+      <div class="detail">
+        <select id="status">
+          <option value="online">オンライン</option>
+          <option value="idle">離席中</option>
+          <option value="dnd">取り込み中</option>
+          <option value="invisible">オフライン</option>
         </select>
-        <input type="text" id="status-text" placeholder="ステータス文">
+        <input type="text" id="activity" placeholder="Playing Minecraft">
+        <button id="statusBtn" class="secondary">変更</button>
+        <button id="clearStatusBtn" class="secondary">リセット</button>
       </div>
-    </div>
+    </details>
 
-    <!-- ログ -->
-    <div class="log">
-      <div id="log-output">システム待機中...</div>
-    </div>
+    <div id="log">準備完了</div>
   </div>
 
   <script src="script.js"></script>
