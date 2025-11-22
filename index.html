@@ -1,62 +1,94 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>RAIDOS FINAL</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DPKO Raider</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <div class="container">
+    <h1>DPKO Raider</h1>
 
-<div class="container">
-  <div class="header">RAIDOS FINAL</div>
+    <!-- トークン -->
+    <div class="section">
+      <div class="header" onclick="toggle(this)">▼ トークン</div>
+      <div class="content">
+        <textarea id="tokens" placeholder="カンマ / 改行 / スペースで区切る"></textarea>
+      </div>
+    </div>
 
-  <div class="section">
-    <div class="label">トークン（1行ずつ）</div>
-    <textarea id="tokens" placeholder="トークンをここに貼り付け"></textarea>
-    <div class="info" id="tcount">0個</div>
+    <!-- サーバーID -->
+    <div class="section">
+      <div class="header" onclick="toggle(this)">▼ サーバーID</div>
+      <div class="content">
+        <input type="text" id="guild" placeholder="123456789012345678">
+      </div>
+    </div>
+
+    <!-- チャンネルID -->
+    <div class="section">
+      <div class="header" onclick="toggle(this)">▼ チャンネルID</div>
+      <div class="content">
+        <textarea id="channels" placeholder="カンマ / 改行 / スペースで区切る"></textarea>
+      </div>
+    </div>
+
+    <!-- メッセージ内容 -->
+    <div class="section">
+      <div class="header" onclick="toggle(this)">▼ メッセージ内容</div>
+      <div class="content">
+        <textarea id="message" placeholder="送信するメッセージを入力">@everyone</textarea>
+        <div class="options">
+          <label><input type="checkbox" id="random"> メッセージのランダム化</label>
+          <label><input type="checkbox" id="mention"> メンション追加</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- メッセージ配信設定 -->
+    <div class="section">
+      <div class="header" onclick="toggle(this)">▼ メッセージ配信設定</div>
+      <div class="content">
+        <input type="text" id="webhook" placeholder="配信するメッセージWebhook URL">
+      </div>
+    </div>
+
+    <!-- 実行ボタン -->
+    <div class="actions">
+      <button id="start">実行</button>
+      <button id="stop">システム停止</button>
+      <button id="leave">サーバー退出</button>
+    </div>
+
+    <!-- ニックネーム変更 -->
+    <div class="section">
+      <div class="header" onclick="toggle(this)">▼ ニックネーム変更</div>
+      <div class="content">
+        <input type="text" id="nickname" placeholder="新しいニックネームを入力">
+      </div>
+    </div>
+
+    <!-- ステータス変更 -->
+    <div class="section">
+      <div class="header" onclick="toggle(this)">▼ ステータス変更</div>
+      <div class="content">
+        <select id="status-type">
+          <option>オンライン</option>
+          <option>オフライン</option>
+          <option>取り込み中</option>
+          <option>退席中</option>
+        </select>
+        <input type="text" id="status-text" placeholder="ステータス文">
+      </div>
+    </div>
+
+    <!-- ログ -->
+    <div class="log">
+      <div id="log-output">システム待機中...</div>
+    </div>
   </div>
 
-  <div class="section">
-    <div class="label">送信メッセージ</div>
-    <textarea id="msg" placeholder="スパム・DM・スレッドなどに使用">@everyone</textarea>
-  </div>
-
-  <div class="section">
-    <div class="label">対象サーバー</div>
-    <div id="guilds" class="list"></div>
-  </div>
-
-  <div class="target">ターゲット: <span id="tname">未選択</span></div>
-
-  <div class="tools">
-    <div class="grid">
-    <label><input type="checkbox" data-f="raider" checked> RAIDER</label>
-    <label><input type="checkbox" data-f="joiner"> JOINER</label>
-    <label><input type="checkbox" data-f="status"> SET-STATUS</label>
-    <label><input type="checkbox" data-f="tokenchk"> TOKEN-CHECKER</label>
-    <label><input type="checkbox" data-f="dm"> DM-SPAMMER</label>
-    <label><input type="checkbox" data-f="vote"> VOTE-SPAMMER</label>
-    <label><input type="checkbox" data-f="slash"> SLASH-COMMAND</label>
-    <label><input type="checkbox" data-f="mention"> RANDOM-MENTION</label>
-    <label><input type="checkbox" data-f="report"> REPORT-SPAMMER</label>
-    <label><input type="checkbox" data-f="group"> GROUP-SPAMMER</label>
-    <label><input type="checkbox" data-f="grouplv"> GROUP-LEAVER</label>
-    <label><input type="checkbox" data-f="thread"> THREAD-SPAMMER</label>
-    <label><input type="checkbox" data-f="react"> REACTION-SPAMMER</label>
-    <label><input type="checkbox" data-f="webhook"> WEBHOOK-SPAMMER</label>
-  </div>
-
-  <div class="actions">
-    <button id="start">開始</button>
-    <button id="stop">停止</button>
-  </div>
-
-  <div class="log">
-    <div id="log">準備完了</div>
-  </div>
-</div>
-
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
