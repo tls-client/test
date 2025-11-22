@@ -2,59 +2,73 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>RAIDOS vΩ</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>RAIDOS</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<header>RAIDOS vΩ</header>
+<div class="header">RAIDOS</div>
 
-<nav>
-  <button class="active" data-tab="dashboard">Dashboard</button>
-  <button data-tab="messages">Messages</button>
-  <button data-tab="tools">Tools</button>
-</nav>
-
-<main>
-  <aside>
-    <div class="token-section">
-      <div class="section-title">Tokens (貼るだけで即武装)</div>
-      <textarea id="token-input" placeholder="トークンを1行ずつ貼り付け"></textarea>
-      <div class="token-count" id="token-count">0 tokens loaded</div>
+<div class="container">
+  <div class="sidebar">
+    <div class="token-box">
+      <h3>トークン</h3>
+      <textarea id="tokens" placeholder="トークンを1行ずつ貼り付け&#10;例: MTM..."></textarea>
+      <div class="count" id="token-count">0個読み込み済み</div>
     </div>
 
-    <div class="section-title">Target Server</div>
-    <div class="menu-group" id="guild-list">
-      <div style="padding:16px 24px;color:#72767d;font-size:13px">トークンを貼ると自動取得</div>
+    <h3 class="section">攻撃対象サーバー</h3>
+    <div id="guild-list" class="guild-list">
+      <div class="placeholder">トークンを貼るとサーバーが表示されます</div>
     </div>
 
-    <div class="section-title">Global Control</div>
-    <div class="menu-group">
-      <div class="menu-item" id="start-all">START TOTAL WAR</div>
-      <div class="menu-item" id="stop-all">EMERGENCY STOP</div>
-    </div>
-  </aside>
+    <h3 class="section">一発操作</h3>
+    <button class="big-btn start" id="start-all">全攻撃開始</button>
+    <button class="big-btn stop" id="stop-all">緊急停止</button>
+  </div>
 
-  <section id="content">
-    <div id="messages" class="page">
-      <div class="current-target">
-        現在ターゲット: <span id="current-guild-name">なし</span> (<span id="current-guild-id">なし</span>)
+  <div class="main">
+    <div class="target-info">
+      現在のターゲット: <span id="target-name">未選択</span>
+    </div>
+
+    <div class="tools">
+      <div class="tool-item" data-tool="raid">
+        <div>通常スパム</div>
+        <div class="switch on" data-switch="raid"></div>
       </div>
-
-      <div class="tools-list">
-        <div class="tool" data-tool="spammer"><div class="tool-name">Nuclear Spammer</div><div class="toggle on" data-toggle="spammer"></div></div>
-        <div class="tool" data-tool="allchannel"><div class="tool-name">All Channel Flood</div><div class="toggle on" data-toggle="allchannel"></div></div>
-        <div class="tool" data-tool="thread"><div class="tool-name">Thread Bomber</div><div class="toggle" data-toggle="thread"></div></div>
-        <div class="tool" data-tool="reaction"><div class="tool-name">Reaction Storm</div><div class="toggle" data-toggle="reaction"></div></div>
-        <div class="tool" data-tool="webhook"><div class="tool-name">Webhook Hell</div><div class="toggle" data-toggle="webhook"></div></div>
-        <div class="tool" data-tool="report"><div class="tool-name">Report Nuke</div><div class="toggle" data-toggle="report"></div></div>
+      <div class="tool-item" data-tool="allch">
+        <div>全チャンネル同時攻撃</div>
+        <div class="switch" data-switch="allch"></div>
       </div>
-
-      <div class="log-area"><div class="log" id="log"></div></div>
+      <div class="tool-item" data-tool="thread">
+        <div>スレッド爆撃</div>
+        <div class="switch" data-switch="thread"></div>
+      </div>
+      <div class="tool-item" data-tool="react">
+        <div>リアクション爆撃</div>
+        <div class="switch" data-switch="react"></div>
+      </div>
+      <div class="tool-item" data-tool="dm">
+        <div>DM一斉送信</div>
+        <div class="switch" data-switch="dm"></div>
+      </div>
+      <div class="tool-item" data-tool="report">
+        <div>通報爆撃</div>
+        <div class="switch" data-switch="report"></div>
+      </div>
+      <div class="tool-item" data-tool="webhook">
+        <div>Webhook破壊</div>
+        <div class="switch" data-switch="webhook"></div>
+      </div>
     </div>
-  </section>
-</main>
+
+    <div class="log-box">
+      <div id="log">システム起動完了。トークンを貼ってください。</div>
+    </div>
+  </div>
+</div>
 
 <script src="script.js"></script>
 </body>
