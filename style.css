@@ -1,0 +1,35 @@
+*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,sans-serif}
+body{background:#1a1a1a;color:#fff;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+header{background:#252525;height:56px;display:flex;align-items:center;padding:0 24px;font-weight:600;font-size:18px;border-bottom:1px solid #333}
+nav{background:#252525;display:flex;border-bottom:1px solid #333}
+nav button{flex:1;padding:16px;background:none;color:#ccc;border:none;cursor:pointer;font-weight:500;transition:0.2s}
+nav button.active{color:#fff;border-bottom:3px solid #5865f2}
+main{flex:1;display:grid;grid-template-columns:280px 1fr}
+aside{background:#2f3136;padding:20px 0;overflow-y:auto}
+section{background:#36393f;padding:24px;overflow-y:auto;display:flex;flex-direction:column}
+
+.section-title{margin-bottom:8px;padding:0 24px;font-size:14px;color:#96989d;text-transform:uppercase;letter-spacing:0.5px}
+.menu-group{margin-bottom:24px}
+.menu-item{display:flex;align-items:center;padding:10px 24px;cursor:pointer;transition:0.2s}
+.menu-item:hover{background:#3a3c43}
+.menu-item.active{background:#5865f2;color:#fff}
+
+.subnav{display:flex;gap:4px;margin-bottom:24px;padding:0 24px;flex-wrap:wrap}
+.subnav button{padding:8px 16px;background:#2f3136;color:#96989d;border:none;border-radius:4px;cursor:pointer;font-size:13px}
+.subnav button.active{background:#40444b;color:#fff}
+
+.tool{display:flex;align-items:center;justify-content:space-between;padding:16px 24px;background:#2f3136;margin-bottom:8px;border-radius:6px;transition:0.2s}
+.tool:hover{background:#40444b}
+.tool-name{font-weight:500}
+
+.toggle{width:48px;height:28px;background:#4f545c;border-radius:14px;position:relative;cursor:pointer;transition:0.3s}
+.toggle::after{content:'';position:absolute;width:24px;height:24px;background:#fafafa;border-radius:50%;top:2px;left:2px;transition:0.3s}
+.toggle.on{background:#5865f2}
+.toggle.on::after{transform:translateX(20px)}
+
+.server-item{display:flex;align-items:center;padding:10px 24px;gap:12px;cursor:pointer}
+.server-item input[type="radio"]{appearance:none;width:16px;height:16px;border:2px solid #5865f2;border-radius:50%;cursor:pointer}
+.server-item input[type="radio"]:checked{border-width:5px}
+
+.log-area{flex:1;margin-top:16px}
+.log{height:100%;background:#000;color:#0f0;padding:12px;font-family:monospace;font-size:12px;overflow-y:auto;border:1px solid #333;border-radius:6px}
