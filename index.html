@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RAIDOS vΩ</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>RAIDOS vΩ</header>
+
+<nav>
+  <button class="active" data-tab="dashboard">Dashboard</button>
+  <button data-tab="messages">Messages</button>
+  <button data-tab="tools">Tools</button>
+</nav>
+
+<main>
+  <aside>
+    <div class="token-section">
+      <div class="section-title">Tokens (貼るだけで即武装)</div>
+      <textarea id="token-input" placeholder="トークンを1行ずつ貼り付け"></textarea>
+      <div class="token-count" id="token-count">0 tokens loaded</div>
+    </div>
+
+    <div class="section-title">Target Server</div>
+    <div class="menu-group" id="guild-list">
+      <div style="padding:16px 24px;color:#72767d;font-size:13px">トークンを貼ると自動取得</div>
+    </div>
+
+    <div class="section-title">Global Control</div>
+    <div class="menu-group">
+      <div class="menu-item" id="start-all">START TOTAL WAR</div>
+      <div class="menu-item" id="stop-all">EMERGENCY STOP</div>
+    </div>
+  </aside>
+
+  <section id="content">
+    <div id="messages" class="page">
+      <div class="current-target">
+        現在ターゲット: <span id="current-guild-name">なし</span> (<span id="current-guild-id">なし</span>)
+      </div>
+
+      <div class="tools-list">
+        <div class="tool" data-tool="spammer"><div class="tool-name">Nuclear Spammer</div><div class="toggle on" data-toggle="spammer"></div></div>
+        <div class="tool" data-tool="allchannel"><div class="tool-name">All Channel Flood</div><div class="toggle on" data-toggle="allchannel"></div></div>
+        <div class="tool" data-tool="thread"><div class="tool-name">Thread Bomber</div><div class="toggle" data-toggle="thread"></div></div>
+        <div class="tool" data-tool="reaction"><div class="tool-name">Reaction Storm</div><div class="toggle" data-toggle="reaction"></div></div>
+        <div class="tool" data-tool="webhook"><div class="tool-name">Webhook Hell</div><div class="toggle" data-toggle="webhook"></div></div>
+        <div class="tool" data-tool="report"><div class="tool-name">Report Nuke</div><div class="toggle" data-toggle="report"></div></div>
+      </div>
+
+      <div class="log-area"><div class="log" id="log"></div></div>
+    </div>
+  </section>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
