@@ -1,72 +1,59 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>RAIDOS</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RAIDOS FINAL</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="header">RAIDOS</div>
-
 <div class="container">
-  <div class="sidebar">
-    <div class="token-box">
-      <h3>トークン</h3>
-      <textarea id="tokens" placeholder="トークンを1行ずつ貼り付け&#10;例: MTM..."></textarea>
-      <div class="count" id="token-count">0個読み込み済み</div>
-    </div>
+  <div class="header">RAIDOS FINAL</div>
 
-    <h3 class="section">攻撃対象サーバー</h3>
-    <div id="guild-list" class="guild-list">
-      <div class="placeholder">トークンを貼るとサーバーが表示されます</div>
-    </div>
-
-    <h3 class="section">一発操作</h3>
-    <button class="big-btn start" id="start-all">全攻撃開始</button>
-    <button class="big-btn stop" id="stop-all">緊急停止</button>
+  <div class="section">
+    <div class="label">トークン（1行ずつ）</div>
+    <textarea id="tokens" placeholder="トークンをここに貼り付け"></textarea>
+    <div class="info" id="tcount">0個</div>
   </div>
 
-  <div class="main">
-    <div class="target-info">
-      現在のターゲット: <span id="target-name">未選択</span>
-    </div>
+  <div class="section">
+    <div class="label">送信メッセージ</div>
+    <textarea id="msg" placeholder="スパム・DM・スレッドなどに使用">@everyone</textarea>
+  </div>
 
-    <div class="tools">
-      <div class="tool-item" data-tool="raid">
-        <div>通常スパム</div>
-        <div class="switch on" data-switch="raid"></div>
-      </div>
-      <div class="tool-item" data-tool="allch">
-        <div>全チャンネル同時攻撃</div>
-        <div class="switch" data-switch="allch"></div>
-      </div>
-      <div class="tool-item" data-tool="thread">
-        <div>スレッド爆撃</div>
-        <div class="switch" data-switch="thread"></div>
-      </div>
-      <div class="tool-item" data-tool="react">
-        <div>リアクション爆撃</div>
-        <div class="switch" data-switch="react"></div>
-      </div>
-      <div class="tool-item" data-tool="dm">
-        <div>DM一斉送信</div>
-        <div class="switch" data-switch="dm"></div>
-      </div>
-      <div class="tool-item" data-tool="report">
-        <div>通報爆撃</div>
-        <div class="switch" data-switch="report"></div>
-      </div>
-      <div class="tool-item" data-tool="webhook">
-        <div>Webhook破壊</div>
-        <div class="switch" data-switch="webhook"></div>
-      </div>
-    </div>
+  <div class="section">
+    <div class="label">対象サーバー</div>
+    <div id="guilds" class="list"></div>
+  </div>
 
-    <div class="log-box">
-      <div id="log">システム起動完了。トークンを貼ってください。</div>
-    </div>
+  <div class="target">ターゲット: <span id="tname">未選択</span></div>
+
+  <div class="tools">
+    <div class="grid">
+    <label><input type="checkbox" data-f="raider" checked> RAIDER</label>
+    <label><input type="checkbox" data-f="joiner"> JOINER</label>
+    <label><input type="checkbox" data-f="status"> SET-STATUS</label>
+    <label><input type="checkbox" data-f="tokenchk"> TOKEN-CHECKER</label>
+    <label><input type="checkbox" data-f="dm"> DM-SPAMMER</label>
+    <label><input type="checkbox" data-f="vote"> VOTE-SPAMMER</label>
+    <label><input type="checkbox" data-f="slash"> SLASH-COMMAND</label>
+    <label><input type="checkbox" data-f="mention"> RANDOM-MENTION</label>
+    <label><input type="checkbox" data-f="report"> REPORT-SPAMMER</label>
+    <label><input type="checkbox" data-f="group"> GROUP-SPAMMER</label>
+    <label><input type="checkbox" data-f="grouplv"> GROUP-LEAVER</label>
+    <label><input type="checkbox" data-f="thread"> THREAD-SPAMMER</label>
+    <label><input type="checkbox" data-f="react"> REACTION-SPAMMER</label>
+    <label><input type="checkbox" data-f="webhook"> WEBHOOK-SPAMMER</label>
+  </div>
+
+  <div class="actions">
+    <button id="start">開始</button>
+    <button id="stop">停止</button>
+  </div>
+
+  <div class="log">
+    <div id="log">準備完了</div>
   </div>
 </div>
 
