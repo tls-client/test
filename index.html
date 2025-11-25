@@ -1,239 +1,391 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="theme-color" content="lightblue" />
-<title>DPKO Raider 改造完全版</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
-<style>
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: #11131a; border-radius: 3px; }
-  ::-webkit-scrollbar-thumb { background: #5865f2; border-radius: 3px; }
-  ::-webkit-scrollbar-thumb:hover { background: #64d6ff; }
+  <meta charset="UTF-8" />
+   <meta name="description" content="DPKO raider">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <meta name="theme-color" content="lightblue">
+   <meta property="og:title" content="raider">
+   <meta property="og:description" content="">
+   <meta property="og:site_name" content="DPKO">
+   <meta property="og:image" content="https://i.imgur.com/XESkw7W.png">
+<link rel="icon" type="image/png" href="https://i.imgur.com/XESkw7W.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rucy Raider</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #11131a; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb { background: #5865f2; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #64d6ff; }
 
-  *, *::before, *::after { box-sizing: border-box; }
-  body {
-    font-family: 'Inter', sans-serif;
-    background: radial-gradient(ellipse at 60% 30%, #23253b 0%, #1a1b20 35%, #101018 100%);
-    color: #fff;
-    margin: 0; padding: 0;
-    display: flex; justify-content: center; align-items: center;
-    height: 100vh;
-    overflow: hidden;
-  }
-  .card {
-    background: #20222b;
-    padding: 32px;
-    border-radius: 20px;
-    box-shadow: 0 15px 35px rgba(0,0,0,.6);
-    width: 100%; max-width: 600px;
-    overflow-y: auto; max-height: 95vh;
-  }
-  h2 {
-    color: #64d6ff;
-    text-align: center;
-    margin-bottom: 24px;
-    font-weight: 600;
-  }
-  label {
-    display: block;
-    margin-top: 18px;
-    font-size: 14px;
-  }
-  textarea, input[type="text"], input[type="number"], select {
-    width: 100%; padding: 10px; margin-top: 6px;
-    border-radius: 8px; border: none;
-    background: #15161b; color: #fff;
-    font-family: monospace; resize: vertical;
-  }
-  textarea { overflow-y: auto; }
-  input[type="number"] { width: 80px; }
-  button.primary {
-    margin-top: 24px;
-    width: 100%;
-    padding: 14px;
-    border: none;
-    border-radius: 14px;
-    background: linear-gradient(135deg,#5a5d69,#36404b);
-    color: #fff;
-    font-weight: 700;
-    font-size: 18px;
-    letter-spacing: .5px;
-    cursor: pointer;
-    transition: all .3s;
-  }
-  button.primary:hover {
-    background: linear-gradient(135deg,#64d6ff,#23253b);
-    color: #15161b;
-    transform: scale(1.03);
-  }
-  button.primary:active {
-    transform: scale(0.96);
-  }
-  #log {
-    margin-top: 20px;
-    padding: 10px;
-    height: 150px;
-    overflow-y: auto;
-    background: #15161b;
-    border-radius: 10px;
-    font-family: monospace;
-    font-size: 12px;
-    white-space: pre-wrap;
-  }
-</style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: radial-gradient(ellipse at 60% 30%, #23253b 0%, #1a1b20 35%, #101018 100%);
+      color:#fff;
+      margin:0; padding:0;
+      display:flex; justify-content:center; align-items:center;
+      height:100vh;
+      overflow:hidden;
+    }
+    .card {
+      background:#20222b;
+      padding:32px;
+      border-radius:20px;
+      box-shadow:0 15px 35px rgba(0,0,0,.6);
+      width:100%; max-width:600px;
+      animation:fadeIn .8s ease;
+      overflow:auto; max-height:95vh;
+    }
+    @keyframes fadeIn {
+      from { opacity:0; transform:translateY(20px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    h2 { color:#64d6ff; text-align:center; margin:0 0 24px; font-weight:600; }
+    label { display:block; margin-top:18px; font-size:14px; }
+    input[type="text"], textarea {
+      width:100%; padding:10px; margin-top:6px;
+      border-radius:8px; border:none;
+      background:#15161b; color:#fff;
+      font-family:monospace; resize:vertical;
+    }
+    textarea { overflow-y:auto; }
+    input[type="number"] {
+      padding:6px; margin-top:6px;
+      border-radius:8px; border:none;
+      background:#15161b; color:#fff;
+      font-family:monospace; appearance:none;
+      width:80px;
+    }
+    select {
+      width:100%; padding:8px; margin-top:6px;
+      border-radius:8px; border:none;
+      background:#15161b; color:#fff;
+      font-size:14px; appearance:none;
+      cursor:pointer;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2364d6ff' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+      background-position: right 8px center;
+      background-repeat: no-repeat;
+      background-size: 16px;
+      padding-right: 32px;
+    }
+    select:focus {
+      outline: 2px solid #64d6ff;
+      outline-offset: 2px;
+    }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance:none; margin:0;
+    }
+    .row {
+      display:flex; gap:12px; align-items:center;
+    }
+    .row > * { flex:none; }
+    .row label,
+    .row .checkbox-container { margin-top:0; }
+    #randomStringSettings {
+      margin-top:8px; padding:8px; 
+      background:rgba(255,255,255,0.05); 
+      border-radius:8px; border-left:3px solid #64d6ff;
+    }
+    .checkbox-container {
+      display:flex; align-items:center; gap:8px;
+      cursor:pointer; font-size:14px; user-select:none;
+      margin-top:6px;
+    }
+    .checkbox-container input {
+      appearance:none; width:36px; height:18px;
+      background:#2a2c32; border-radius:18px;
+      position:relative; transition:background .3s ease;
+    }
+    .checkbox-container:hover input { background:#64d6ff; }
+    .checkbox-container input:focus {
+      outline:none; box-shadow:0 0 0 3px rgba(100,214,255,0.5);
+    }
+    .checkbox-container input::before {
+      content:''; position:absolute;
+      width:14px; height:14px; border-radius:50%;
+      background:#fff; top:2px; left:2px;
+      transition:transform .3s cubic-bezier(.68,-.55,.27,1.55);
+    }
+    .checkbox-container input:checked { background:#64d6ff; }
+    .checkbox-container input:checked::before {
+      transform:translateX(18px);
+    }
+    .checkbox-container span { transition:color .3s; }
+    .checkbox-container input:checked + span {
+      color:#64d6ff;
+    }
+    button.primary {
+      margin-top:24px; width:100%; padding:14px;
+      border:none; border-radius:14px;
+      background:linear-gradient(135deg,#5a5d69,#36404b);
+      color:#fff; font-weight:700; font-size:18px;
+      letter-spacing:.5px; cursor:pointer; position:relative;
+      box-shadow:
+        0 4px 15px rgba(100,214,255,.3),
+        0 0 10px rgba(255,255,255,.1),
+        inset 0 0 5px rgba(255,255,255,.2);
+      overflow:hidden; transition:all .3s;
+    }
+    button.primary:hover {
+      background:linear-gradient(135deg,#64d6ff,#23253b);
+      box-shadow:
+        0 6px 22px rgba(100,214,255,.4),
+        0 0 24px rgba(255,255,255,.2),
+        inset 0 0 10px rgba(255,255,255,.3);
+      transform:scale(1.03);
+      color: #15161b;
+    }
+    button.primary:active {
+      transform:scale(0.96);
+      box-shadow:inset 0 4px 6px rgba(0,0,0,.3);
+    }
+    button.primary.loading {
+      color: #ffffffa2; pointer-events:none;
+    }
+    button.secondary {
+      margin-top:8px; padding:6px 12px;
+      background:#23253b; color:#e1e3e8;
+      font-size:14px; border:none; border-radius:6px;
+      position:relative; overflow:hidden;
+      transition:background .3s, color .3s;
+    }
+    button.secondary:hover {
+      background:#64d6ff;
+      color:#15161b;
+    }
+    button.secondary:active {
+      background:#23253b;
+      color:#64d6ff;
+    }
+    #stopSpam, #leaveBtn {
+      width:48%; padding:10px;
+      border:none; border-radius:10px;
+      background:#3a3c44;
+      color:#fff; font-weight:700; font-size:14px;
+      letter-spacing:.5px; cursor:pointer; transition:all .3s;
+      margin-top:12px;
+      box-shadow: 0 4px 10px rgba(100,214,255,0.15);
+    }
+    #stopSpam:hover, #leaveBtn:hover {
+      background:#64d6ff;
+      color:#15161b;
+      transform:scale(1.03);
+    }
+    #stopSpam:active, #leaveBtn:active {
+      transform:scale(0.96);
+      box-shadow:inset 0 4px 6px rgba(0,0,0,.3);
+    }
+    .button-container {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+    details { margin-top:18px; }
+    summary { list-style:none; padding-left:20px; cursor:pointer; font-weight:600; position:relative; margin-top:0; }
+    summary::-webkit-details-marker { display:none; }
+    summary::marker { content:none; }
+    summary::before { content:'▶'; position:absolute; left:0; top:50%; transform:translateY(-50%); transition:transform .3s ease; }
+    details[open] > summary::before { transform:translateY(-50%) rotate(90deg); }
+    .detail-content { transform-origin:top center; transform:scaleY(0); opacity:0; transition:transform .3s ease, opacity .3s ease; }
+    details[open] .detail-content { transform:scaleY(1); opacity:1; }
+    #log { margin-top:20px; padding:10px; height:120px; overflow-y:auto; background:#15161b; border-radius:10px; font-family:monospace; font-size:12px; white-space:pre-wrap; resize: vertical;}
+    @media (max-width: 600px) {
+      .card {
+        padding: 16px;
+        max-width: 100%;
+        max-height: 100vh;
+        border-radius: 10px;
+      }
+      h2 {
+        font-size: 18px;
+        margin-bottom: 16px;
+      }
+      label {
+        font-size: 13px;
+        margin-top: 12px;
+      }
+      input[type="text"],
+      textarea,
+      input[type="number"] {
+        padding: 8px;
+        font-size: 12px;
+      }
+      button.primary {
+        padding: 12px;
+        font-size: 16px;
+      }
+      button.secondary {
+        padding: 8px 12px;
+        font-size: 13px;
+      }
+      .row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .row label {
+        width: 100%;
+      }
+      .button-container {
+        flex-direction: column;
+        gap: 8px;
+      }
+      #stopSpam,
+      #leaveBtn {
+        width: 100%;
+      }
+      details summary {
+        font-size: 13px;
+        padding-left: 18px;
+      }
+      .checkbox-container {
+        font-size: 13px;
+      }
+      #log {
+        height: 80px;
+        font-size: 11px;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="card">
-  <h2>DPKO Raider 改造完全版</h2>
-  <label>トークン
-    <textarea id="tokens" rows="4" placeholder="Discordトークンを入力してください"></textarea>
-  </label>
-  <label>サーバーID
-    <input type="text" id="guildId" placeholder="123456789012345678" />
-  </label>
-  <label>チャンネルID
-    <textarea id="channelIds" rows="2" placeholder="カンマ区切りで入力"></textarea>
-  </label>
-  <label>メッセージ内容
-    <textarea id="message" rows="4" placeholder="メッセージを入力"></textarea>
-  </label>
-  <label>メッセージ送信間隔（秒）
-    <input type="number" id="delay" min="0" step="0.1" value="1" />
-  </label>
-  <label>メッセージ送信上限
-    <input type="number" id="limit" min="1" step="1" value="1" />
-  </label>
-  <button id="sendMessages" class="primary">メッセージ送信</button>
-  <hr />
-  <h3>プロフィール変更</h3>
-  <label>グローバルネーム（表示名）
-    <input type="text" id="globalName" placeholder="変更したい名前" />
-  </label>
-  <label>プロフィール画像 (base64)
-    <textarea id="avatarBase64" rows="4" placeholder="data:image/png;base64,..."></textarea>
-  </label>
-  <button id="changeProfile" class="primary">プロフィール変更</button>
-  <div id="log"></div>
-</div>
-
-<script>
-const logEl = document.getElementById('log');
-function appendLog(msg) {
-  logEl.textContent += msg + '\
-';
-  logEl.scrollTop = logEl.scrollHeight;
-}
-
-function parseTokens(input) {
-  return input.split(/[s,]+/).filter(Boolean);
-}
-
-function parseChannelIds(input) {
-  return input.split(/[s,]+/).filter(Boolean);
-}
-
-async function sendMessage(token, channelId, content) {
-  const url = `https://discord.com/api/v9/channels/${channelId}/messages`;
-  const payload = { content };
-  const headers = {
-    'Authorization': token,
-    'Content-Type': 'application/json'
-  };
-  const res = await fetch(url, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify(payload),
-    referrerPolicy: 'no-referrer'
-  });
-  return res;
-}
-
-async function changeProfile(token, globalName, avatarBase64) {
-  const url = "https://discord.com/api/v9/users/@me";
-  const payload = {};
-  if(globalName) payload.global_name = globalName;
-  if(avatarBase64) payload.avatar = avatarBase64;
-  const headers = {
-    'Authorization': token,
-    'Content-Type': 'application/json'
-  };
-  const res = await fetch(url, {
-    method: 'PATCH',
-    headers,
-    body: JSON.stringify(payload),
-    referrerPolicy: 'no-referrer'
-  });
-  return res;
-}
-
-document.getElementById('sendMessages').addEventListener('click', async () => {
-  appendLog('メッセージ送信開始');
-  const tokens = parseTokens(document.getElementById('tokens').value);
-  const guildId = document.getElementById('guildId').value.trim();
-  const channelIds = parseChannelIds(document.getElementById('channelIds').value);
-  const message = document.getElementById('message').value;
-  const delay = Number(document.getElementById('delay').value) * 1000;
-  const limit = Number(document.getElementById('limit').value);
-
-  if (!tokens.length || !guildId || !channelIds.length || !message) {
-    appendLog('トークン・サーバーID・チャンネルID・メッセージは必須です');
-    return;
-  }
-
-  for (const token of tokens) {
-    let sentCount = 0;
-    for (const channelId of channelIds) {
-      if(limit > 0 && sentCount >= limit) break;
-      try {
-        const res = await sendMessage(token, channelId, message);
-        if(res.ok){
-          appendLog(`✅ ${token.slice(0,10)}***** - ${channelId} にメッセージ送信成功`);
-          sentCount++;
-        } else {
-          const error = await res.json();
-          appendLog(`❌ ${token.slice(0,10)}***** - ${channelId} に失敗: ${error.message || res.status}`);
-        }
-      } catch(err){
-        appendLog(`❌ ${token.slice(0,10)}***** - ${channelId} に送信中エラー: ${err.message}`);
-      }
-      await new Promise(r => setTimeout(r, delay));
-    }
-  }
-  appendLog('メッセージ送信処理完了');
-});
-
-document.getElementById('changeProfile').addEventListener('click', async () => {
-  appendLog('プロフィール変更開始');
-  const tokens = parseTokens(document.getElementById('tokens').value);
-  const globalName = document.getElementById('globalName').value.trim();
-  const avatarBase64 = document.getElementById('avatarBase64').value.trim();
-
-  if (!tokens.length) {
-    appendLog('トークンを入力してください');
-    return;
-  }
-  if(!globalName && !avatarBase64){
-    appendLog('グローバルネームかプロフィール画像を入力してください');
-    return;
-  }
-
-  for(const token of tokens){
-    try{
-      const res = await changeProfile(token, globalName, avatarBase64);
-      if(res.ok){
-        appendLog(`✅ ${token.slice(0,10)}***** - プロフィール変更成功`);
-      } else {
-        const err = await res.json();
-        appendLog(`❌ ${token.slice(0,10)}***** - プロフィール変更失敗: ${err.message || res.status}`);
-      }
-    } catch(e){
-      appendLog(`❌ ${token.slice(0,10)}***** - プロフィール変更中エラー: ${e.message}`);
-    }
-  }
-  appendLog('プロフィール変更処理完了');
-});
-</script>
+  <div class="card">
+    <h2>Rucy Raider</h2>
+    <form id="form">
+      <label>トークン
+        <textarea id="tokens" rows="4" placeholder="カンマ / 改行 / スペースで区切る MTM1ODc4MTE3NTIzMzI1MzU*****,MTEwMDU5Njc1NjQ1NjE2MTMwM*****,..."></textarea>
+      </label>
+      <label>サーバーID
+        <input type="text" id="guildId" required placeholder="123456789012345678">
+      </label>
+      <label>チャンネルID
+        <textarea id="channelIds" rows="2" placeholder="カンマ / 改行 / スペースで区切る 123456789012345678,123456789012345678,..."></textarea>
+      </label>
+      <button type="button" id="autoFillChannels" class="secondary">チャンネル自動取得</button>
+      <label>メッセージ内容
+        <textarea id="message" rows="4" placeholder="送信するメッセージを入力"></textarea>
+      </label>
+      <label class="checkbox-container">
+        <input type="checkbox" id="randomize">
+        <span>メッセージのランダマイズ</span>
+      </label>
+      <label class="checkbox-container">
+        <input type="checkbox" id="randomString">
+        <span>ランダム文字列を末尾に追加</span>
+      </label>
+      <div class="row" style="display: none;" id="randomStringSettings">
+        <label>ランダム文字列の桁数
+          <input type="number" id="randomStringLength" min="1" max="50" value="5" placeholder="5"> 文字
+        </label>
+      </div>
+      <div class="row">
+        <label>メッセージ送信間隔
+          <input type="number" id="delay" min="0" step="0.1" placeholder="0"> 秒
+        </label>
+        <label>メッセージ送信上限
+          <input type="number" id="limit" min="1" step="1" placeholder="0"> 回
+        </label>
+      </div>
+      <details>
+        <summary>メンション設定</summary>
+        <div class="detail-content">
+          <label>メンションするユーザーID一覧
+            <textarea id="mentionIds" rows="2" placeholder="カンマ / 改行 / スペースで区切る 123456789012345678,123456789012345678"></textarea>
+          </label>
+          <button type="button" id="fetchMentions" class="secondary">メンション自動取得</button>
+        </div>
+      </details>
+      <details>
+        <summary>投票設定</summary>
+        <div class="detail-content">
+          <label>投票 タイトル
+            <input type="text" id="pollTitle" placeholder="投票タイトル">
+          </label>
+          <label>投票 選択肢
+            <textarea id="pollAnswers" rows="2" placeholder="カンマ / 改行 / スペースで区切る 選択肢1,選択肢2,..."></textarea>
+          </label>
+        </div>
+      </details>
+      <details>
+        <summary>メッセージ転送設定</summary>
+        <div class="detail-content">
+          <label>転送するメッセージURL
+            <input type="text" id="forwardMessageUrl" placeholder="https://discord.com/channels/123456789012345678/123456789012345678/123456789012345678">
+          </label>
+        </div>
+      </details>
+      <button id="submitBtn" type="submit" class="primary" disabled>実行</button>
+    </form>
+    <div class="button-container">
+      <button id="stopSpam" class="secondary">スパム停止</button>
+      <button id="leaveBtn" class="secondary">サーバー退出</button>
+    </div>
+    <details style="margin-top: 16px;">
+      <summary>ニックネーム変更</summary>
+      <div class="detail-content">
+        <label>新しいニックネーム
+          <input type="text" id="newNickname" placeholder="新しいニックネームを入力" maxlength="32">
+        </label>
+        <button type="button" id="changeNicknameBtn" class="secondary">ニックネーム変更</button>
+      </div>
+    </details>
+    <details style="margin-top: 16px;">
+      <summary>ステータス変更</summary>
+      <div class="detail-content">
+        <div class="row">
+          <label>オンライン状態
+            <select id="onlineStatus">
+              <option value="online">オンライン</option>
+              <option value="idle">離席中</option>
+              <option value="dnd">取り込み中</option>
+              <option value="invisible">オフライン</option>
+            </select>
+          </label>
+          <label>アクティビティ
+            <select id="activityType">
+              <option value="">なし</option>
+              <option value="0">Playing</option>
+              <option value="1">Listening</option>
+              <option value="3">Watching</option>
+              <option value="5">Competing</option>
+            </select>
+          </label>
+        </div>
+        <label>アクティビティ名
+          <input type="text" id="activityName" placeholder="例: Minecraft, Spotify, YouTube" maxlength="128">
+        </label>
+        <div class="row">
+          <button type="button" id="changeStatusBtn" class="secondary">ステータス変更</button>
+          <button type="button" id="clearStatusBtn" class="secondary">ステータス削除</button>
+        </div>
+      </div>
+    </details>
+    <details style="margin-top: 16px;">
+      <summary>プロフィール編集</summary>
+      <div class="detail-content">
+        <label>プロフィール画像
+          <input type="file" id="profileImageFile" accept="image/*">
+          <div id="imagePreview" style="margin-top: 8px; display: none;">
+            <img id="previewImg" style="max-width: 100px; max-height: 100px; border-radius: 50%; object-fit: cover;">
+            <button type="button" id="clearImageBtn" style="margin-left: 8px; padding: 4px 8px; background: #ff4757; color: white; border: none; border-radius: 4px; cursor: pointer;">削除</button>
+          </div>
+        </label>
+        <label>グローバルネーム
+          <input type="text" id="globalName" placeholder="全体での表示名" maxlength="32">
+        </label>
+        <label>プロフィール説明 (Bio)
+          <textarea id="profileBio" rows="3" placeholder="自己紹介文を入力" maxlength="190"></textarea>
+        </label>
+        <div class="row">
+          <button type="button" id="changeProfileBtn" class="secondary">プロフィール変更</button>
+          <button type="button" id="changeBioBtn" class="secondary">Bio変更</button>
+        </div>
+      </div>
+    </details>
+    <div id="log"></div>
+  </div>
+  <script src="script.js"></script>
 </body>
 </html>
